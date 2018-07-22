@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -117,7 +118,7 @@ Fixed Navigation
                <li><a href="team.html">Team</a></li>
                <!-- <li><a href="pricing.html">Pricing</a></li>-->
 		 <li><a href="https://medium.com/pushnpull">Blog</a></li>
-               <li><a href="contact.html">Contact</a></li>
+               <li><a href="contact.php">Contact</a></li>
                <!-- <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pages <span class="caret"></span></a>
                   <ul class="dropdown-menu">
@@ -157,7 +158,115 @@ End Fixed Navigation
 		<div class="row">
 			<div class="col-md-8 col-md-offset-2">
 				<div class="pro-block text-center" style="padding: 20px 50px; background: white; box-shadow: 0px 2px 28px 0px #7777775e; border-radius: 5px;">
-					<h2 style="font-size: 25px; line-height: 1;">email-work8vishal@gmail.com</h2>
+					
+					
+					<?php
+require_once('connect.php');
+require_once('config.php');
+require('PHPMailer/PHPMailerAutoload.php');
+
+if(isset($_POST) & !empty($_POST)){
+
+$name = $_POST['name'];
+$email = $_POST['email'];
+$subject = $_POST['subject'];
+$message = $_POST['message'];
+
+if(!isset($name) || empty($name)){
+	$error[] = "Name is required";
+}
+
+if(!isset($email) || empty($email)){
+	$error[] = "E-Mail is required";
+}
+
+if(!isset($subject) || empty($subject)){
+	$error[] = "Subject is required";
+}
+
+if(!isset($message) || empty($message)){
+	$error[] = "Message is required";
+}
+
+/*
+//This is for mail function. No need of smpt connection. Works only in live site. For localhost use phpmailer below.
+
+if(!isset($error) || empty($error)){
+	//Below is the admin email whom the notification will be sent to	
+	$to = "AdminEmail@insert.here";
+	$headers = "From : " . $email;
+	
+	if(mail($to, $subject, $message, $headers)){
+		$sql = "INSERT INTO `contact` (name, email, subject, message) VALUES ('$name', '$email', '$subject', '$message')";
+		if(mysqli_query($connection, $sql)){
+			"Message Received, we will get back to you soon";
+		}else{
+			echo "Failed to send message, Try again";
+		}
+	}else{
+		echo "Failed to send message, Try again";
+	}
+//This is for mail function. No need of smpt connection. Works only in live site. For localhost use phpmailer below.
+	*/
+
+	//This is the php mailer function.
+	
+	$mail = new PHPMailer();
+	//Enter correct smtp configuration details
+	//Don't Enter username and password here. open config.php
+	$mail->isSMTP();
+	$mail->Host = $smtphost;
+	$mail->SMTPAuth = false;
+	$mail->Username = $smtpuser;
+	$mail->Password = $smtppass;
+//	$mail->SMTPSecure = 'ssl';
+	$mail->Port = 2550;
+	//Email address that recipient (admin is the recipient here) will see (may be fake)
+	$mail->setFrom('ashifweer@gmail.com', 'Admin Name');
+	//Below is the admin email whom (admin is the recipient here) the notification will be sent to
+	$mail->addAddress('root1@localhost', 'Admin Name'); 
+
+	$mail->Subject = $subject;
+	$mail->Body    = $message . " Name : " . $name . ". E-Mail : " . $email;
+
+	if(!$mail->send()) {
+	    echo 'Message could not be sent.';
+	    echo 'Mailer Error: ' . $mail->ErrorInfo;
+	} else {
+		$sql = "INSERT INTO `contact` (name, email, subject, message) VALUES ('$name', '$email', '$subject', '$message')";
+		if(mysqli_query($connection, $sql)){
+			echo "<p align='center'><font color=green font face='verdana' size='3pt'>Message has been sent, we will get back to you soon</font> </p>";
+
+		}
+	}
+	
+}
+?>
+					
+					<div class="container">
+	<div class="row">
+		<form class="col-md-6 col-md-offset-0" method="post">
+			<h2>Contact Us</h2>
+		  <div class="form-group">
+		    <label for="exampleInputEmail1">Name</label>
+		    <input type="text" name="name" class="form-control" id="exampleInputEmail1" placeholder="Enter Your Full Name" required="">
+		  </div>
+		  <div class="form-group">
+		    <label for="exampleInputEmail1">Email address</label>
+		    <input type="email" name="email" class="form-control" id="exampleInputEmail1" placeholder="Enter Your Email" required="">
+		  </div>
+		  <div class="form-group">
+		    <label for="exampleInputPassword1">Subject</label>
+		    <input type="text" name="subject" class="form-control" id="exampleInputPassword1" placeholder="Enter Your Subject" required="">
+		  </div>
+		  <textarea class="form-control"  name="message" rows="3" placeholder="Enter Your Query Here" required=""></textarea>
+		  <button style="margin-top:5px;" type="submit" class="btn btn-default">Submit</button>
+		  
+		</form>
+	</div>
+</div>
+					
+					
 					<!--<h2 style="font-size: 25px; line-height: 1;">You have downloaded free version of Bingo.</h2>
 					<h4 style="padding: 10px 0 15px 0;">To get full access of this page please purchase the premium version</h4>
 					<h4>Why Premium?</h4>
@@ -285,6 +394,7 @@ End Fixed Navigation
     </div> <!-- end container -->
   </div>
   <div class="footer-bottom">
+   
     <h5>Copyright 2016. All rights reserved.</h5>
     <h6>©<a href="https://pushnpull.github.io/Newciety/team.html">PUSHnPULL</a> built using Bingo theme</h6>
   </div>
